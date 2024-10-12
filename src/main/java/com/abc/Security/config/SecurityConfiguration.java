@@ -20,15 +20,27 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception{
-        httpSecurity.csrf().disable().authorizeHttpRequests()
-                .requestMatchers("")
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider)
-                .addFilter(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+//        httpSecurity.csrf().disable().authorizeHttpRequests()
+//                .requestMatchers("")
+//                .permitAll()
+//                .anyRequest()
+//                .authenticated()
+//                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .authenticationProvider(authenticationProvider)
+//                .addFilter(jwtAuthFilter);
+        httpSecurity
+                .csrf(csrf -> csrf.disable()) // Disable CSRF using lambda
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/public/**").permitAll() // Example: Permit all for public endpoints
+                        .anyRequest().authenticated() // All other requests need authentication
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // Stateless session
+                )
+                .authenticationProvider(authenticationProvider) // Your custom authentication provider
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); // Add JWT filter before UsernamePasswordAuthenticationFilter
+
         return httpSecurity.build();
 
     }
