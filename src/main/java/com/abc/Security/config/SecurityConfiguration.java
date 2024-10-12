@@ -32,7 +32,7 @@ public class SecurityConfiguration {
         httpSecurity
                 .csrf(csrf -> csrf.disable()) // Disable CSRF using lambda
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/public/**").permitAll() // Example: Permit all for public endpoints
+                        .requestMatchers("/api/v1/auth/**").permitAll() // Example: Permit all for public endpoints
                         .anyRequest().authenticated() // All other requests need authentication
                 )
                 .sessionManagement(session -> session
